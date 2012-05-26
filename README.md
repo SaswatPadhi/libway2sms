@@ -6,8 +6,9 @@ interface and this code is tested to be working prefect (as of 26th May, 2012).
 Features
 ----------
 * Works with the latest Way2SMS interface.
-* No limitation on length of message!
+* (Virtually) No more limitation on length of message!
 * Send SMS to multiple mobile numbers by a single function call.
+* Supports new line characters and support for sending multiline messages.
 
 Using libway2sms
 ------------------
@@ -15,7 +16,10 @@ Really simple. Just `require` the library file, and `sendSMS`:
 ```php
 <?php
     require("libway2sms.php");
-    sendSMS('9876543210', 'drowssap', '9876543210', 'Hello me!');
+    sendSMS('9876543210', 'drowssap', '9876543210', // notice the multi-line message below.
+    "Hello XYZ!
+I am sending this message via Way2SMS.
+(But I saved myself from the annoying ads)");
 ?>
 ```
 

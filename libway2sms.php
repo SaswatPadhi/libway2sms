@@ -27,7 +27,8 @@ function sendSMS ($user, $pass, $whom, $msgs)
         return "ERROR :: Empty message!";
     $user = urlencode($user);
     $pass = urlencode($pass);
-    $msgarr = array_values(array_filter(array_map('trim', explode("\n", chunk_split($msgs, 140, "\n"))), function($item) {return !empty($item) || $item === 0;}));
+    $break = mb_convert_encoding('&#x205E;', 'UTF-8', 'HTML-ENTITIES');
+    $msgarr = array_values(array_filter(array_map('trim', explode($break, chunk_split($msgs, 140, $break)))));
 
     $res = array();
     $curl = curl_init();
@@ -69,13 +70,9 @@ function sendSMS ($user, $pass, $whom, $msgs)
     preg_match_all('/<input[\s]*type="hidden"[\s]*name="Action"[\s]*id="Action"[\s]*value="?([^>]*)?"/si', $content, $match);
     $action = $match[1][0];
 
-    $arr = preg_split("/[\s]*[,;\s][\s]*/", $whom);
+    $arr = array_values(array_filter(array_map('trim', preg_split("/[\s]*[,;\s][\s]*/", $whom))));
     foreach ($arr as $num)
     {
-        $num = trim($num);
-        if(strlen($num) == 0)
-            continue;
-
         if (strlen($num) != 10 || !is_numeric($num) || strpos($num, ".") != false)
         {
             $res[] = array('number' => $num, 'text' => urldecode($msgs), 'result' => "ERROR :: Invalid number!");
