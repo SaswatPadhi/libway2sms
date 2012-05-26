@@ -20,20 +20,21 @@
  * I (Saswat Padhi), am in no way responsible for illegal use of the following code.
  **/
 
-function sendSMS($user, $pass, $whom, $msgs)
+function sendSMS ($user, $pass, $whom, $msgs)
 {
-    $user = urlencode($user);
-    $pass = urlencode($pass);
-    $msgs = urlencode(substr(trim($msgs), 0, 140));
+    $msgs = trim($msgs);
     if (strlen($msgs) == 0)
         return "ERROR :: Empty message!";
+    $user = urlencode($user);
+    $pass = urlencode($pass);
+    $msgarr = array_values(array_filter(array_map('trim', explode("\n", chunk_split($msgs, 140, "\n"))), function($item) {return !empty($item) || $item === 0;}));
 
     $res = array();
     $curl = curl_init();
 
     // Something is wrong with site3.
     $siteid = 3;
-    while($siteid == 3)
+    while ($siteid == 3)
         $siteid = rand(1, 12);
 
     $curlOpts = array(
@@ -82,13 +83,18 @@ function sendSMS($user, $pass, $whom, $msgs)
         }
         $num = urlencode($num);
 
-        curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/onesms.action');
-        curl_setopt($curl, CURLOPT_REFERER, curl_getinfo($curl, CURLINFO_EFFECTIVE_URL));
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, "HiddenAction=instantsms&catnamedis=Birthday&chkall=on&Action=".$action."&MobNo=".$num."&textArea=".$msgs);
-        $contents = curl_exec($curl);
+        foreach ($msgarr as $msg) {
+            curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/onesms.action');
+            curl_setopt($curl, CURLOPT_REFERER, curl_getinfo($curl, CURLINFO_EFFECTIVE_URL));
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, "HiddenAction=instantsms&catnamedis=Birthday&chkall=on&Action=".$action."&MobNo=".$num."&textArea=".$msg);
+            $contents = curl_exec($curl);
 
-        $pos = strpos($contents, 'Message has been submitted successfully');
+            $pos = strpos($contents, 'Message has been submitted successfully');
+            if($pos === false)
+                break;
+            usleep(200*1000);
+        }
         $res[] = array('target' => $num, 'text' => urldecode($msgs), 'result' => ($pos !== false));
     }
 
