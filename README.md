@@ -1,7 +1,7 @@
 libway2sms
 ============
 A PHP function to send SMS to any mobile number in India, by cURLing Way2SMS. Way2SMS recently made some changes to their
-interface and this code is tested to be working prefect (as of 26th May, 2012).
+interface and this code is tested to be working prefect (as of 28th May, 2012).
 
 Features
 ----------

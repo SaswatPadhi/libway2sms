@@ -48,7 +48,7 @@ function sendSMS ($user, $pass, $whom, $msgs)
         CURLOPT_COOKIEFILE      =>  "cookie_way2sms",
         //CURLOPT_PROXY           =>  "http://netmon.iitb.ac.in:80/",
         //CURLOPT_PROXYUSERPWD    =>  "username:password",
-        CURLOPT_URL             =>  "http://site".$siteid.".way2sms.com/w2slogin.action",
+        CURLOPT_URL             =>  "http://site".$siteid.".way2sms.com/Login1.action",
         CURLOPT_POSTFIELDS      =>  "username=".$user."&password=".$pass."&button=Login",
         CURLOPT_REFERER         =>  "http://site".$siteid.".way2sms.com/content/index.html",
         CURLOPT_USERAGENT       =>  "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0"
@@ -81,7 +81,7 @@ function sendSMS ($user, $pass, $whom, $msgs)
         $num = urlencode($num);
 
         foreach ($msgarr as $msg) {
-            curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/w2sonesms.action');
+            curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/quicksms.action');
             curl_setopt($curl, CURLOPT_REFERER, curl_getinfo($curl, CURLINFO_EFFECTIVE_URL));
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, "HiddenAction=instantsms&catnamedis=Birthday&chkall=on&Action=".$action."&MobNo=".$num."&textArea=".$msg);
