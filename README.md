@@ -1,17 +1,28 @@
 libway2sms
 ============
-A PHP function to send SMS to any mobile number in India, by cURLing Way2SMS. Way2SMS recently made some changes to their
-interface and this code is tested to be working prefect (as of 28th May, 2012).
+A PHP function to send SMS to any mobile number in India, by cURLing Way2SMS. Way2SMS keeps changing their interface every now and then
+but this function would adapt to most simple changes that Way2SMS implements. <sup>[#](https://github.com/SaswatPadhi/libway2sms#trivial-changes-to-way2sms-interface)</sup>
 
-Features
-----------
-* Works with the latest Way2SMS interface.
+### Background ###
+------------------
+Way2SMS is one of the (few good) online services allowing Indian users to send SMS messages to any Indian mobile for free.
+But their website is full of annoying ads and several interface bugs, which makes sending an SMS really inconvenient for users.
+Previously, there have been several attempts at writing a better (unofficial :-P) interface for Way2SMS, but ...
+
+* They are not actively maintained. Some of them have not been modified since 2009!
+* The interface is mostly hard-coded. So, they keep breaking down every now and then.
+* They are not very feature rich. Some of them do not allow sending message to multiple numbers simultaneously.
+  Most of them do not allow sending messages more than 140 character in length.
+
+### Features of libway2sms ###
+------------------------------
 * (Virtually) No more limitation on length of message!
 * Send SMS to multiple mobile numbers by a single function call.
-* Supports new line characters and support for sending multiline messages.
+* Supports new line characters and support for sending multi-line messages.
+* Has better detection techniques that would adapt to slight changes in the Way2SMS interface. <sup>[#](https://github.com/SaswatPadhi/libway2sms#trivial-changes-to-way2sms-interface)</sup>
 
-Using libway2sms
-------------------
+### How to use libway2sms ###
+-----------------------------
 Really simple. Just `require` the library file, and `sendSMS`:
 ```php
 <?php
@@ -37,7 +48,26 @@ Optionally, you can verify if the messages ware successfully sent:
 ?>
 ```
 
-.: DISCLAIMER :.
-------------------
+### .: DISCLAIMER :. ###
+------------------------
 If you intend to use this piece of code, only **YOU** are responsible for what you use this code for.
-The author does not take any responsiibility for any kind of misuse of this code.
+The author does not take any responsibility for any kind of misuse of this code.
+
+<br><br><br>
+
+#### Trivial changes to Way2SMS interface ####
+----------------------------------------------
+Since the initial commit of libway2sms, I have seen Way2SMS making the following changes to their interface:
+
+1.  [`25th May`](https://github.com/SaswatPadhi/libway2sms/commit/d386bcd76de4e521c52ca0831ca1b5b2eedfee53)   Just renamed the files:
+    - Login1.action     -->     login.action
+    - quicksms.action   -->     onesms.action
+
+2.  [`26th May`](https://github.com/SaswatPadhi/libway2sms/commit/f51be03e2a8d89f2e6f3505751c4e25791f56185)   Just renamed the files:
+    - login.action      -->     w2slogin.action
+    - onesms.action     -->     w2sonesms.action
+
+3.  [`28th May`](https://github.com/SaswatPadhi/libway2sms/commit/161e2b37cc974e894c329097407ccfc3788cb254)   Just renamed the files:
+    - w2slogin.action      -->     Login1.action
+    - w2sonesms.action     -->     quicksms.action
+

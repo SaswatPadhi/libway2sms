@@ -39,18 +39,13 @@ function sendSMS ($user, $pass, $whom, $msgs)
         $siteid = rand(1, 12);
 
     $curlOpts = array(
-        CURLOPT_POST            =>  1,
-        CURLOPT_COOKIESESSION   =>  1,
         CURLOPT_FOLLOWLOCATION  =>  1,
         CURLOPT_RETURNTRANSFER  =>  1,
         CURLOPT_MAXREDIRS       =>  20,
         CURLOPT_CONNECTTIMEOUT  =>  30,
-        CURLOPT_COOKIEFILE      =>  "cookie_way2sms",
         //CURLOPT_PROXY           =>  "http://netmon.iitb.ac.in:80/",
         //CURLOPT_PROXYUSERPWD    =>  "username:password",
-        CURLOPT_URL             =>  "http://site".$siteid.".way2sms.com/Login1.action",
-        CURLOPT_POSTFIELDS      =>  "username=".$user."&password=".$pass."&button=Login",
-        CURLOPT_REFERER         =>  "http://site".$siteid.".way2sms.com/content/index.html",
+        CURLOPT_URL             =>  "http://site".$siteid.".way2sms.com/content/index.html",
         CURLOPT_USERAGENT       =>  "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0"
     );
     curl_setopt_array($curl, $curlOpts);
@@ -58,6 +53,16 @@ function sendSMS ($user, $pass, $whom, $msgs)
 
     if (curl_errno($curl))
         return "ERROR :: Could not connect to Way2SMS. (". curl_error($curl).")";
+
+    preg_match_all('/[\s]*document\.loginform\.action[\s]*=[\s]*"?([^\"]*)?\.action"/si', $content, $match);
+    $login = $match[1][0].".action";
+
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_COOKIESESSION, 1);
+    curl_setopt($curl, CURLOPT_COOKIEFILE, "cookie_way2sms");
+    curl_setopt($curl, CURLOPT_POSTFIELDS,"username=".$user."&password=".$pass."&button=Login");
+    curl_setopt($curl, CURLOPT_URL, "http://site".$siteid.".way2sms.com/content/".$login);
+    $content = curl_exec($curl);
 
     $main = stripos(curl_getinfo($curl, CURLINFO_EFFECTIVE_URL), "Main.action");
     if ($main === false || $main == 0)
@@ -70,18 +75,21 @@ function sendSMS ($user, $pass, $whom, $msgs)
     preg_match_all('/<input[\s]*type="hidden"[\s]*name="Action"[\s]*id="Action"[\s]*value="?([^>]*)?"/si', $content, $match);
     $action = $match[1][0];
 
+    preg_match_all('/<form[\s]*method="post".*name="InstantSMS".*action="?([^>]*)?\.action"/si', $content, $match);
+    $instantSMS = $match[1][0].".action";
+
     $arr = array_values(array_filter(array_map('trim', preg_split("/[\s]*[,;\s][\s]*/", $whom))));
     foreach ($arr as $num)
     {
         if (strlen($num) != 10 || !is_numeric($num) || strpos($num, ".") != false)
         {
-            $res[] = array('number' => $num, 'text' => urldecode($msgs), 'result' => "ERROR :: Invalid number!");
+            $res[] = array('number' => $num, 'text' => urldecode($msgs), 'result' => "ERROR :: Not a 10-digit mobile number! (Do not add prefix like +91)");
             continue;
         }
         $num = urlencode($num);
 
         foreach ($msgarr as $msg) {
-            curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/quicksms.action');
+            curl_setopt($curl, CURLOPT_URL, 'http://site'.$siteid.'.way2sms.com/jsp/'.$instantSMS);
             curl_setopt($curl, CURLOPT_REFERER, curl_getinfo($curl, CURLINFO_EFFECTIVE_URL));
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, "HiddenAction=instantsms&catnamedis=Birthday&chkall=on&Action=".$action."&MobNo=".$num."&textArea=".$msg);
