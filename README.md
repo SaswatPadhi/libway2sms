@@ -48,6 +48,20 @@ Optionally, you can verify if the messages ware successfully sent:
 ?>
 ```
 
+### Using libway2sms to SMS from bash ###
+-----------------------------------------
+1. Run `install.sh` on your system.
+2. Enter authentication details when asked.
+3. Use `send_sms` to send sms from your terminal.
+
+```bash
+    send_sms "3836854975" "This is sent from my terminal."
+```
+
+**NOTE**:
+* You should have PHP installed on your machine for this script to work. (Should be @ `/opt/lampp/bin/php` or you should change the path in `install.sh`)
+* You can change your authentication details in the file `~/.way2sms/way2smsAuth`.
+
 ### .: DISCLAIMER :. ###
 ------------------------
 If you intend to use this piece of code, only **YOU** are responsible for what you use this code for.
